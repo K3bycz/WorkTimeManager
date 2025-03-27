@@ -45,4 +45,49 @@ class WorkTimeController extends AbstractController
             ], 400);
         }
     }
+
+    #[Route('/summary', name: 'app_work_time_summary', methods: ['GET'])]
+    public function summary(Request $request, WorkTimeService $workTimeService): JsonResponse
+    {
+        $employeeId = $request->query->get('employeeId');
+        $date = $request->query->get('date');
+        
+        if (!$employeeId || !$date) {
+            return $this->json([
+                'success' => false,
+                'error' => 'Błąd: brakuje wymaganych parametrów (employeeId, date)'
+            ], 400);
+        }
+        
+        try {
+            $summary = $workTimeService->generateSummary($employeeId, $date);
+            
+            if ($summary['summaryType'] === 'day') {
+                $response = [
+                    'response' => [
+                        'suma po przeliczeniu' => $summary['totalPay'] . ' PLN',
+                        'ilość godzin z danego dnia' => $summary['totalHours'],
+                        'stawka' => $summary['standardRate'] . ' PLN'
+                    ]
+                ];
+            } else {
+                $response = [
+                    'response' => [
+                        'ilość normalnych godzin z danego miesiąca' => $summary['standardHours'],
+                        'stawka' => $summary['standardRate'] . ' PLN',
+                        'ilość nadgodzin z danego miesiąca' => $summary['overtimeHours'],
+                        'stawka nadgodzinowa' => $summary['overtimeRate'] . ' PLN',
+                        'suma po przeliczeniu' => $summary['totalPay'] . ' PLN'
+                    ]
+                ];
+            }
+            
+            return $this->json($response);
+        } catch (\Exception $e) {
+            return $this->json([
+                'success' => false,
+                'error' => $e->getMessage()
+            ], 400);
+        }
+    }
 }

@@ -41,5 +41,38 @@ class WorkTimeRepository extends ServiceEntityRepository
         }
     }
 
+    public function findByEmployeeAndDay(Employee $employee, DateTime $date): array
+    {
+        $startDay = clone $date;
+        $startDay->setTime(0, 0, 0);
+        
+        return $this->createQueryBuilder('w')
+            ->where('w.employee = :employee')
+            ->andWhere('w.startDay = :startDay')
+            ->setParameter('employee', $employee)
+            ->setParameter('startDay', $startDay)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findByEmployeeAndMonth(Employee $employee, DateTime $date): array
+    {
+        $startOfMonth = clone $date;
+        $startOfMonth->setDate($date->format('Y'), $date->format('m'), 1)->setTime(0, 0, 0);
+        
+        $endOfMonth = clone $date;
+        $endOfMonth->setDate($date->format('Y'), $date->format('m'), $date->format('t'))->setTime(23, 59, 59);
+        
+        return $this->createQueryBuilder('w')
+            ->where('w.employee = :employee')
+            ->andWhere('w.startDateTime >= :startOfMonth')
+            ->andWhere('w.startDateTime <= :endOfMonth')
+            ->setParameter('employee', $employee)
+            ->setParameter('startOfMonth', $startOfMonth)
+            ->setParameter('endOfMonth', $endOfMonth)
+            ->orderBy('w.startDateTime', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }
 
