@@ -24,7 +24,7 @@ class WorkTimeRepository extends ServiceEntityRepository
             ->select('COUNT(w.id)')
             ->where('w.employee = :employee')
             ->andWhere('w.startDay = :startDay')
-            ->setParameter('employee', $employee)
+            ->setParameter('employee', $employee->getId()->toBinary())
             ->setParameter('startDay', $startDay)
             ->getQuery()
             ->getSingleScalarResult();
@@ -49,7 +49,7 @@ class WorkTimeRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('w')
             ->where('w.employee = :employee')
             ->andWhere('w.startDay = :startDay')
-            ->setParameter('employee', $employee)
+            ->setParameter('employee', $employee->getId()->toBinary())
             ->setParameter('startDay', $startDay)
             ->getQuery()
             ->getResult();
@@ -67,7 +67,7 @@ class WorkTimeRepository extends ServiceEntityRepository
             ->where('w.employee = :employee')
             ->andWhere('w.startDateTime >= :startOfMonth')
             ->andWhere('w.startDateTime <= :endOfMonth')
-            ->setParameter('employee', $employee)
+            ->setParameter('employee', $employee->getId()->toBinary())
             ->setParameter('startOfMonth', $startOfMonth)
             ->setParameter('endOfMonth', $endOfMonth)
             ->orderBy('w.startDateTime', 'ASC')
