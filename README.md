@@ -1,5 +1,8 @@
 # Work Time Management Application
 
+A Symfony-based web API for managing employee working hours and calculating their monthly earnings.
+This application allows you to register employees, track their work sessions, calculate total hours (including overtime), and automatically compute wages based on configurable parameters such as hourly rate and overtime multiplier. It’s designed to help small teams or businesses handle basic time and salary tracking needs, with a clean and simple API interface ready for integration.
+
 ## Technologies and Versions
 - PHP 8.4.5
 - Symfony 7.2.4
